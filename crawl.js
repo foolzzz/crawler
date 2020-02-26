@@ -2,12 +2,10 @@
 const pp = require('puppeteer-core');
 const url = require('url');
 const path = require('path')
+const fs = require('fs');
 
 const startUrl = "";
-//const rootPath = 'web'
 
-
-const fs = require('fs');
 
 // 递归创建目录 同步方法
 function mkdirsSync(dirname) {
@@ -20,6 +18,12 @@ function mkdirsSync(dirname) {
       return true;
     }
   }
+}
+
+if (typeof String.prototype.startsWith != 'function') {
+  String.prototype.startsWith = function (prefix){
+    return this.slice(0, prefix.length) === prefix;
+  };
 }
 
 
@@ -60,6 +64,9 @@ function mkdirsSync(dirname) {
                 uri = url.parse(response.url())
 
                 pathname = uri.pathname;
+                if(pathname.endsWith("/")) {
+                    pathname = pathname + 'index.html';
+                }
 
                 fname = path.basename(pathname)
                 if(fname == '') {
@@ -75,14 +82,20 @@ function mkdirsSync(dirname) {
                 mkdirsSync(fpath);
                 fs.writeFile(path.join(fpath, fname), buffer, { 'flag': 'w' }, function(err) {
                     if(err) {
+                        console.log('------------------------------------')
+                        console.log('------------------------------------')
+                        console.log('------------------------------------')
                         console.log("writeFile err: " + err);
+                        console.log('------------------------------------')
+                        console.log('------------------------------------')
+                        console.log('------------------------------------')
+                        console.log('------------------------------------')
+                        console.log('------------------------------------')
                     }
                 });
             });
         }
     });
-
-
 
     const page = await browser.newPage();
     await page.goto(startUrl);
